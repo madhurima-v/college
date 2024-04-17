@@ -24,18 +24,18 @@ app.use(bodyParser.urlencoded({extended: true}))
 var transporter=setmail()
 
 
-  // const client = new pg.Client({
-  //   user: 'postgres',
-  //   host: 'localhost',
-  //   database: 'myproject',
-  //   password: '123456',
-  //   port: 5432
-  // });
+  const client = new pg.Client({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'myproject',
+    password: '123456',
+    port: 5432
+  });
   
-  // client.connect(function(err){
-  //   if(err) throw err;
-  //   console.log("connected")
-  // });
+  client.connect(function(err){
+    if(err) throw err;
+    console.log("connected")
+  });
 
 
 app.get('/', function (req, res) {
@@ -54,7 +54,7 @@ app.post('/login',async function (req,res){
       var data = await client.query(query2,[req.body.email])
         if(data.rowCount>0){
           if(data.rows[0].password==req.body.password){
-          console.log("User login successfull")
+          console.log("User login successful")
           res.render('index.ejs')
           }
           else{
@@ -91,25 +91,6 @@ app.post('/register', async function(req,res){
       else{
         var query1 = "insert into register_info (fullname,email,password) values ($1,$2,$3)"
         var data = await client.query(query1,[req.body.name,req.body.email,req.body.password])
-        // var mailOptions = {
-        //   from: 'velurelleofficial@gmail.com',
-        //   to: req.body.email,
-        //   subject: 'Account Successfully Created',
-        //   html: '<img src="cid:email-img"/>'+'<p style=" color: gray; font-size: 18px; text-align: center;"> Welcome To </p>' + '<h1 style=" color: black; font-size: 35px; text-align: center;"> Velurelle </h1>' + req.body.name + '<p> Your account has been successfully created. Log in to shop the new collection, build your saved items list, and manage your profile </p>' + '<p style="font-size: 12px;"><a href="http://localhost:8080/">Shop Now</a></p>',
-        //   attachments: [{
-        //     filename: 'email-img.jpg',
-        //     path: __dirname+'image\email-img.jpg',
-        //     cid: 'email-img'
-        // }]
-        // };
-        
-        // transporter.sendMail(mailOptions, function(error, info){
-        //   if (error) {
-        //     console.log(error);
-        //   } else {
-        //     console.log('Email sent: ' + info.response);
-        //   }
-        // });
         sendmail(req.body.email,req.body.name,transporter)
 
         res.render('thanks.ejs',{
